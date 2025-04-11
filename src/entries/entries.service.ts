@@ -4,6 +4,7 @@ import { UpdateEntryDto } from './dto/update-entry.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Entry } from './entities/entry.entity';
 import { Repository } from 'typeorm';
+import { Account } from '../accounts/entities/account.entity';
 
 @Injectable()
 export class EntriesService {
@@ -12,8 +13,9 @@ export class EntriesService {
     private entryRepository: Repository<Entry>
   ) {}
 
-  create(createEntryDto: CreateEntryDto) {
-    return 'This action adds a new entry';
+  create(createEntryDto: CreateEntryDto): Promise<Entry> {
+    const entry = this.entryRepository.create(createEntryDto)
+    return this.entryRepository.save(entry)
   }
 
   findAll() {

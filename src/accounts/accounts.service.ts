@@ -12,8 +12,9 @@ export class AccountsService {
     private accountRepository: Repository<Account>,
   ) {}
 
-  create(createAccountDto: CreateAccountDto) {
-    return 'This action adds a new account';
+  create(createAccountDto: CreateAccountDto): Promise<Account> {
+    const account = this.accountRepository.create(createAccountDto)
+    return this.accountRepository.save(account)
   }
 
   findAll(): Promise<Account[]> {
