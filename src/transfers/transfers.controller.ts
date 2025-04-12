@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, HttpException } from '@nestjs/common';
 import { TransfersService } from './transfers.service';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { UpdateTransferDto } from './dto/update-transfer.dto';
@@ -9,8 +9,8 @@ export class TransfersController {
 
   @Post()
   async create(@Body() createTransferDto: CreateTransferDto) {
-    const res = await this.transfersService.create(createTransferDto);
-    return res
+
+    return await this.transfersService.create(createTransferDto);
   }
 
   @Get()

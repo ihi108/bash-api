@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { UpdateTransferDto } from './dto/update-transfer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,9 +35,18 @@ export class TransfersService {
 
 
       const fromAccount = await this.accountService.findOne(createTransferDto.from_account_id);
+      if (!fromAccount) {
+        throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
+      }
+      if (fromAccount.balance < createTransferDto.amount) {
+        throw new ForbiddenException(`fromAccount has insufficient funds`);
+      }
       fromAccount.balance = Number(fromAccount.balance) - Number(createTransferDto.amount);
 
       const toAccount = await this.accountService.findOne(createTransferDto.to_account_id);
+      if (!toAccount) {
+        throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
+      }
       toAccount.balance = Number(toAccount.balance) + Number(createTransferDto.amount);
 
 
@@ -62,16 +71,13 @@ export class TransfersService {
         transfer: transfer
       }
     } catch (error) {
-      console.log("Error: ", error)
       await queryRunner.rollbackTransaction()
+      throw error
     } finally {
       await queryRunner.release()
     }
 
-    
-
     return res
-
   }
 
   findAll() {
