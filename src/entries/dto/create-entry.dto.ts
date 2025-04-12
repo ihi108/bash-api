@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsNumber } from "class-validator"
 
 export class CreateEntryDto {
-    @IsNumber()
     @IsNotEmpty()
-    amount: string
+    @IsNumber()
+    amount: number
 
-    @IsNumber()
     @IsNotEmpty()
+    @IsNumber()
     account_id: string
 }

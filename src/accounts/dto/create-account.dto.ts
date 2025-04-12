@@ -6,6 +6,7 @@ export class CreateAccountDto {
     @IsString()
     owner: string
 
+    @IsNotEmpty()
     @IsNumber()
-    balance: string
+    balance: number
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
@@ -21,7 +20,7 @@ export class AccountsService {
     return this.accountRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.accountRepository.findOneBy({ id });
   }
 

@@ -8,8 +8,9 @@ export class TransfersController {
   constructor(private readonly transfersService: TransfersService) {}
 
   @Post()
-  create(@Body() createTransferDto: CreateTransferDto) {
-    return this.transfersService.create(createTransferDto);
+  async create(@Body() createTransferDto: CreateTransferDto) {
+    const res = await this.transfersService.create(createTransferDto);
+    return res
   }
 
   @Get()

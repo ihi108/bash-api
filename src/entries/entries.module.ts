@@ -7,5 +7,6 @@ import { Entry } from './entities/entry.entity';
   imports: [TypeOrmModule.forFeature([Entry])],
   controllers: [],
   providers: [EntriesService],
+  exports: []
 })
 export class EntriesModule {}

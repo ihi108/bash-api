@@ -8,10 +8,10 @@ export class Entry extends Base {
     id: string
 
     @Column({ 
-        type: "bigint", 
+        type: "numeric", 
         comment: "can be negative or positive" 
     })
-    amount: string
+    amount: number
 
     @Column("bigint")
     account_id: string

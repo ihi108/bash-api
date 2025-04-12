@@ -1,23 +1,18 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Check, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Base } from "../../base.entities/base";
 import { Entry } from "../../entries/entities/entry.entity";
 import { Transfer } from "../../transfers/entities/transfer.entity";
 
 @Entity("accounts")
 export class Account extends Base {
-    @PrimaryGeneratedColumn(
-        'increment', 
-        {type: "bigint"}
-    )
-    id: number
+    @PrimaryGeneratedColumn({type: "bigint"})
+    id: string
 
     @Column()
     owner: string
 
-    @Column(
-        "bigint", 
-    )
-    balance: string
+    @Column("numeric")
+    balance: number
 
     @OneToMany(() => Entry, entry => entry.account)
     entries: Entry[]

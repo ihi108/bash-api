@@ -6,6 +6,7 @@ import { TransfersModule } from './transfers/transfers.module';
 import { EntriesModule } from './entries/entries.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { DataSource } from 'typeorm';
       entities: [],
       autoLoadEntities: true,
       logging: true,
-    })
+    }), UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
