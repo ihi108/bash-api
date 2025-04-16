@@ -1,9 +1,8 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { UpdateTransferDto } from './dto/update-transfer.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Transfer } from './entities/transfer.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource} from 'typeorm';
 import { Entry } from '../entries/entities/entry.entity';
 import { responseTransferDto } from './dto/response-transfer.dto';
 import { AccountsService } from '../accounts/accounts.service';
@@ -11,7 +10,6 @@ import { AccountsService } from '../accounts/accounts.service';
 @Injectable()
 export class TransfersService {
   constructor(
-    @InjectRepository(Transfer) private transferRepository: Repository<Transfer>,
     private dataSource: DataSource,
     private accountService: AccountsService
   ) {}
@@ -19,7 +17,6 @@ export class TransfersService {
   async create(createTransferDto: CreateTransferDto): Promise<responseTransferDto> {
 
     let res: responseTransferDto;
-
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.connect()
     await queryRunner.startTransaction()
