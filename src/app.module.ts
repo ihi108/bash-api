@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UtilsService } from './utils/utils.service';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -31,10 +33,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         autoLoadEntities: true,
         logging: true,
       }),
-    })
+    }),
+    UtilsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UtilsService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
