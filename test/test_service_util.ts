@@ -23,7 +23,7 @@ export async function createTestModule({
         port: 5432,
         username: 'root',
         password: 'password',
-        database: 'bash',
+        database: 'bash_test',
         synchronize: true,
         entities,
       }),
