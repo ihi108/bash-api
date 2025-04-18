@@ -52,10 +52,12 @@ describe('TransfersService', () => {
     amount = 25.75;
 
   });
-
-
-
  
+  it('should be defined', async () => {
+    expect(service).toBeDefined();
+    expect(accountsService).toBeDefined();
+    expect(utilsService).toBeDefined();
+  });
 
   it('should create two accounts and process a transaction', async () => {
     let transfer: responseTransferDto;
@@ -80,10 +82,71 @@ describe('TransfersService', () => {
     expect(transfer.to_account.id).toEqual(to_account.id)
   });
 
-  it('should be defined', async () => {
-    expect(service).toBeDefined();
-    expect(accountsService).toBeDefined();
-    expect(utilsService).toBeDefined();
+  it('should create multiple accounts and process multiple transactions', async () => {
+    interface accountPair {
+      from_account: Account
+      to_account: Account
+    }
+    let accountPairs: accountPair[] = [];
+    let transactionPromises: Promise<responseTransferDto>[] = [];
+
+    for (let i=0; i<5; i++) {
+      let from_account_obj: CreateAccountDto = {
+        owner: utilsService.randomString(7),
+        balance: utilsService.constantBalance(),
+      }
+  
+      let to_account_obj: CreateAccountDto = {
+        owner: utilsService.randomString(7),
+        balance: utilsService.constantBalance(),
+      }
+  
+      from_account = await accountsService.create(from_account_obj)
+      to_account = await accountsService.create(to_account_obj)
+
+      let accounts: accountPair = {
+        from_account,
+        to_account,
+      }
+
+      accountPairs[i] = accounts;
+    }
+
+    for (let i=0; i<5; i++) {
+
+      let transferObj: CreateTransferDto = {
+        from_account_id: accountPairs[i].from_account.id,
+        to_account_id: accountPairs[i].to_account.id,
+        amount: 150,
+      }
+  
+      transactionPromises[i] = service.create(transferObj)
+    }
+
+    return Promise.all(transactionPromises)
+    .then((values) => {
+      for (let i = 0; i < 5; i++) {
+        let value = values[0]
+        let from_account = accountPairs[0].from_account
+        let to_account = accountPairs[0].to_account
+
+        expect(value).toBeDefined();
+        expect(from_account).toBeInstanceOf(Account);
+        expect(to_account).toBeInstanceOf(Account);
+        expect(from_account.id).toBe(value.from_account.id)
+        expect(to_account.id).toBe(value.to_account.id)
+
+        expect(value.to_account).toBeInstanceOf(Account);
+        expect(value.from_account).toBeInstanceOf(Account);
+        expect(value.from_entry).toBeInstanceOf(Entry)
+        expect(value.to_entry).toBeInstanceOf(Entry)
+        expect(value.transfer).toBeInstanceOf(Transfer)
+
+        expect(from_account.balance - value.transfer.amount).toEqual(value.from_account.balance)
+        expect(to_account.balance + value.transfer.amount).toEqual(value.to_account.balance)
+      }
+    })
+
   });
 
 
