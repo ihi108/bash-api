@@ -19,7 +19,7 @@ export class TransfersService {
     let res: responseTransferDto;
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.connect()
-    await queryRunner.startTransaction()
+    await queryRunner.startTransaction("SERIALIZABLE")
 
     try {
       const fromEntry: Entry = new Entry()
