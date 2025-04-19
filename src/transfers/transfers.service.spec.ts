@@ -127,9 +127,9 @@ describe('TransfersService', () => {
     return Promise.all(transactionPromises)
     .then((values) => {
       for (let i = 0; i < 8; i++) {
-        let value = values[0]
-        let from_account = accountPairs[0].from_account
-        let to_account = accountPairs[0].to_account
+        let value = values[i]
+        let from_account = accountPairs[i].from_account
+        let to_account = accountPairs[i].to_account
 
         expect(value).toBeDefined();
         expect(from_account).toBeInstanceOf(Account);
