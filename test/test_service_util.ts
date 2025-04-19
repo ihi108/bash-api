@@ -26,7 +26,6 @@ export async function createTestModule({
         database: 'bash_test',
         synchronize: true,
         entities,
-        logging: true,
       }),
       ...imports,
     ],
