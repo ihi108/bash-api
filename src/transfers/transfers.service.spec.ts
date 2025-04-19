@@ -12,6 +12,7 @@ import { CreateAccountDto } from '../accounts/dto/create-account.dto';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { responseTransferDto } from './dto/response-transfer.dto';
 import { DataSource } from 'typeorm';
+import { ForbiddenException } from '@nestjs/common';
 
 describe('TransfersService', () => {
   let service: TransfersService;
@@ -149,6 +150,36 @@ describe('TransfersService', () => {
 
   });
 
+  it('transaction fails with insufficient funds', async () => {
+
+    let transferResponse: responseTransferDto;
+
+    try {
+      let from_account_obj: CreateAccountDto = {
+        owner: utilsService.randomString(7),
+        balance: 0,
+      }
+  
+      let to_account_obj: CreateAccountDto = {
+        owner: utilsService.randomString(7),
+        balance: utilsService.constantBalance(),
+      }
+  
+      from_account = await accountsService.create(from_account_obj)
+      to_account = await accountsService.create(to_account_obj)
+  
+      let transferObj: CreateTransferDto = {
+        from_account_id: from_account.id,
+        to_account_id: to_account.id,
+        amount: 150,
+      }
+  
+      transferResponse = await service.create(transferObj)
+    } catch (error) {
+      expect(error).toBeInstanceOf(ForbiddenException)
+      expect(error.message).toBe("fromAccount has insufficient funds")
+    }
+  })
 
   afterEach(async () => {
     await module.close()
