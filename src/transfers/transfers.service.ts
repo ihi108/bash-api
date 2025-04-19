@@ -5,13 +5,12 @@ import { Transfer } from './entities/transfer.entity';
 import { DataSource} from 'typeorm';
 import { Entry } from '../entries/entities/entry.entity';
 import { responseTransferDto } from './dto/response-transfer.dto';
-import { AccountsService } from '../accounts/accounts.service';
+import { Account } from '../accounts/entities/account.entity';
 
 @Injectable()
 export class TransfersService {
   constructor(
     private dataSource: DataSource,
-    private accountService: AccountsService
   ) {}
 
   async create(createTransferDto: CreateTransferDto): Promise<responseTransferDto> {
@@ -33,7 +32,14 @@ export class TransfersService {
         toEntry.account_id = String(createTransferDto.to_account_id);
 
 
-        const fromAccount = await this.accountService.findOne(createTransferDto.from_account_id);
+        const fromAccount = await queryRunner.manager.findOne(Account, {
+          where: {
+            id: createTransferDto.from_account_id
+          },
+          lock: {
+            mode: "pessimistic_write"
+          }
+        });
         if (!fromAccount) {
           throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
         }
@@ -42,7 +48,14 @@ export class TransfersService {
         }
         fromAccount.balance = Number(fromAccount.balance) - Number(createTransferDto.amount);
 
-        const toAccount = await this.accountService.findOne(createTransferDto.to_account_id);
+        const toAccount = await queryRunner.manager.findOne(Account, {
+          where: {
+            id: createTransferDto.to_account_id
+          },
+          lock: {
+            mode: "pessimistic_write"
+          }
+        });
         if (!toAccount) {
           throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
         }
@@ -69,17 +82,17 @@ export class TransfersService {
           to_entry: toEntry,
           transfer: transfer
         }
+
+        break;
       } catch (error) {
         await queryRunner.rollbackTransaction()
         if (error.code == 40001 && attempts < retries - 1) {
           await new Promise(res => setTimeout(res, 100 * (attempts + 1)));
-          console.log("Retrying transaction");
         } else {
           throw error
         }
       } finally {
         await queryRunner.release()
-        break
       }
     }
 
