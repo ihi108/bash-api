@@ -91,7 +91,7 @@ describe('TransfersService', () => {
     let accountPairs: accountPair[] = [];
     let transactionPromises: Promise<responseTransferDto>[] = [];
 
-    for (let i=0; i<5; i++) {
+    for (let i=0; i<8; i++) {
       let from_account_obj: CreateAccountDto = {
         owner: utilsService.randomString(7),
         balance: utilsService.constantBalance(),
@@ -113,7 +113,7 @@ describe('TransfersService', () => {
       accountPairs[i] = accounts;
     }
 
-    for (let i=0; i<5; i++) {
+    for (let i=0; i<8; i++) {
 
       let transferObj: CreateTransferDto = {
         from_account_id: accountPairs[i].from_account.id,
@@ -126,7 +126,7 @@ describe('TransfersService', () => {
 
     return Promise.all(transactionPromises)
     .then((values) => {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 8; i++) {
         let value = values[0]
         let from_account = accountPairs[0].from_account
         let to_account = accountPairs[0].to_account
@@ -148,7 +148,7 @@ describe('TransfersService', () => {
       }
     })
 
-  });
+  }, 70000);
 
   it('transaction fails with insufficient funds', async () => {
 
