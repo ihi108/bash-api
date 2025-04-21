@@ -6,6 +6,7 @@ import { DataSource} from 'typeorm';
 import { Entry } from '../entries/entities/entry.entity';
 import { responseTransferDto } from './dto/response-transfer.dto';
 import { Account } from '../accounts/entities/account.entity';
+import { AccountsService } from '../accounts/accounts.service';
 
 @Injectable()
 export class TransfersService {
@@ -36,9 +37,6 @@ export class TransfersService {
           where: {
             id: createTransferDto.from_account_id
           },
-          lock: {
-            mode: "pessimistic_write"
-          }
         });
         if (!fromAccount) {
           throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
@@ -52,9 +50,6 @@ export class TransfersService {
           where: {
             id: createTransferDto.to_account_id
           },
-          lock: {
-            mode: "pessimistic_write"
-          }
         });
         if (!toAccount) {
           throw new NotFoundException(`account with id: ${createTransferDto.from_account_id} not found`)
